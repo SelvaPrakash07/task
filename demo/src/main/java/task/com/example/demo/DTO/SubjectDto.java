@@ -11,6 +11,11 @@ public class SubjectDto {
     private int id;
     public String subjectName;
     public String code;
+    public Timestamp createdAt;
+    public Timestamp updatedAt ;
+    public int isActive ;
+    public int isDeleted;
+
 
     public int getId() {
         return id;
@@ -68,8 +73,4 @@ public class SubjectDto {
         this.isDeleted = isDeleted;
     }
 
-    public Timestamp createdAt;
-    public Timestamp updatedAt ;
-    public int isActive ;
-    public int isDeleted;
 }

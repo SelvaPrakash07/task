@@ -1,8 +1,11 @@
 package task.com.example.demo.Service;
 
+import task.com.example.demo.BaseResponse.ApiResponse;
 import task.com.example.demo.BaseResponse.BaseResponse;
+import task.com.example.demo.BaseResponse.PageResponse;
 import task.com.example.demo.DTO.*;
 import task.com.example.demo.Model.Medium;
+import task.com.example.demo.Model.Standard;
 
 public interface Service {
 
@@ -68,5 +71,8 @@ public interface Service {
 
     BaseResponse saveEverything(StandardDto standardDto);
 
-    BaseResponse savesubjectNdStaffDto(SubjectNdStaffDto subjectNdStaffDto);
+
+    ApiResponse<Standard> GetUserWithPagination(int offset, int pageSize, String userName);
+
+    PageResponse<Standard> getByname(Integer pageNo, Integer pageSize, String sortBy, String name);
 }

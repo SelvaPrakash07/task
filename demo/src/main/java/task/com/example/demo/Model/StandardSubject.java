@@ -30,11 +30,11 @@ public class StandardSubject {
         this.standard = standard;
     }
 
-    public Medium getSubject1() {
+    public Subject getSubject1() {
         return subject1;
     }
 
-    public void setSubject1(Medium subject1) {
+    public void setSubject1(Subject subject1) {
         this.subject1 = subject1;
     }
 
@@ -49,6 +49,6 @@ public class StandardSubject {
 
     @ManyToOne
     @JoinColumn(name = "subject_fk_id")
-    private Medium subject1;
+    private Subject subject1;
 
 }

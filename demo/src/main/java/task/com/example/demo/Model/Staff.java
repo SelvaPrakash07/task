@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,6 +19,17 @@ public class Staff {
 
     @Column(name = "staff_name")
     public String staffName;
+
+    @ManyToMany(mappedBy ="staff")
+    private List<Subject> subject;
+
+    public List<Subject> getSubject() {
+        return subject;
+    }
+
+    public void setSubject(List<Subject> subject) {
+        this.subject = subject;
+    }
 
     public int getId() {
         return id;

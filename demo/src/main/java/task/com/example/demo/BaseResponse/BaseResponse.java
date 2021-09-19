@@ -10,6 +10,7 @@ import lombok.Setter;
 public class BaseResponse<T> {
     String StatusCode;
     String StatusMsg;
+    private T Data;
 
     public String getStatusCode() {
         return StatusCode;
@@ -34,7 +35,5 @@ public class BaseResponse<T> {
     public void setData(T data) {
         Data = data;
     }
-
-    private T Data;
 }
 

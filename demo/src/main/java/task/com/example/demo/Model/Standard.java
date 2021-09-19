@@ -2,6 +2,7 @@ package task.com.example.demo.Model;
 
 import lombok.Getter;
 import lombok.Setter;
+import task.com.example.demo.DTO.MediumDto;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -88,13 +89,14 @@ public class Standard {
         this.isDeleted = isDeleted;
     }
 
-    public Section getSectionid() {
-        return sectionid;
+    public int getSectionid() {
+        return 0;
     }
 
     public void setSectionid(Section sectionid) {
         this.sectionid = sectionid;
     }
+
 
     public List<StandardMedium> getStandardMediumList() {
         return standardMediumList;

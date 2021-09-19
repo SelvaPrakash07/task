@@ -2,9 +2,12 @@ package task.com.example.demo.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import task.com.example.demo.BaseResponse.ApiResponse;
 import task.com.example.demo.BaseResponse.BaseResponse;
+import task.com.example.demo.BaseResponse.PageResponse;
 import task.com.example.demo.DTO.StaffDto;
 import task.com.example.demo.DTO.StandardDto;
+import task.com.example.demo.Model.Standard;
 import task.com.example.demo.Service.ServiceImpl;
 
 
@@ -48,4 +51,20 @@ import task.com.example.demo.Service.ServiceImpl;
         public BaseResponse saveall(@RequestBody StandardDto standardDto) {
             return serviceimpl.saveEverything(standardDto);
         }
+
+        @GetMapping("/pagination/{offset}/{pageSize}/{name}")
+        private ApiResponse<Standard> getUserWithPagination(@PathVariable int offset, @PathVariable int pageSize, @PathVariable String name){
+            return serviceimpl.GetUserWithPagination(offset, pageSize, name);
+        }
+        @GetMapping(value = "standard/name")
+        public @ResponseBody
+        PageResponse<Standard> getname(@RequestParam(defaultValue = "0") Integer pageNo,
+                                       @RequestParam(defaultValue = "10") Integer pageSize,
+                                       @RequestParam(defaultValue = "id") String sortBy,
+                                       @RequestParam String name)
+                throws Exception {
+            return serviceimpl.getByname(pageNo, pageSize, sortBy,name);
+        }
+
+
     }

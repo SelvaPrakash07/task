@@ -9,9 +9,14 @@ public class SubjectStaff {
     @Column(name = "id")
     private int id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "subject_fk_id")
     private Subject subject;
+
+
+    @ManyToOne
+    @JoinColumn(name = "staff_fk_id")
+    private Staff staff1;
 
     public int getId() {
         return id;
@@ -37,7 +42,4 @@ public class SubjectStaff {
         this.staff1 = staff1;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "staff_fk_id")
-    private Staff staff1;
 }

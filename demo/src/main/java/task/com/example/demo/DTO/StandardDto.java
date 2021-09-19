@@ -2,8 +2,11 @@ package task.com.example.demo.DTO;
 
 import lombok.Getter;
 import lombok.Setter;
+import task.com.example.demo.Model.Section;
 
 import java.sql.Timestamp;
+import java.util.List;
+
 @Getter
 @Setter
 
@@ -15,6 +18,34 @@ public class StandardDto {
     public Timestamp updatedAt ;
     public int isActive ;
     public int isDeleted;
+private List<MediumDto> mediumDtoList;
+private  List<SubjectDto> subjectDtoList;
+
+    public List<SubjectDto> getSubjectDtoList() {
+        return subjectDtoList;
+    }
+
+    public void setSubjectDtoList(List<SubjectDto> subjectDtoList) {
+        this.subjectDtoList = subjectDtoList;
+    }
+
+    private int sectionid;
+
+    public int getSectionid() {
+        return sectionid;
+    }
+
+    public void setSectionid(int sectionid) {
+        this.sectionid = sectionid;
+    }
+
+    public List<MediumDto> getMediumDtoList() {
+        return mediumDtoList;
+    }
+
+    public void setMediumDtoList(List<MediumDto> mediumDtoList) {
+        this.mediumDtoList = mediumDtoList;
+    }
 
     public int getId() {
         return id;

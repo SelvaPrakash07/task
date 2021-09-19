@@ -23,6 +23,17 @@ public class Subject {
     @Column(name="created_at")
     public Timestamp createdAt;
 
+    @ManyToMany(mappedBy = "subject")
+    private List<Staff> staff;
+
+    public List<Staff> getStaff() {
+        return staff;
+    }
+
+    public void setStaff(List<Staff> staff) {
+        this.staff = staff;
+    }
+
     public int getId() {
         return id;
     }

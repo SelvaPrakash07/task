@@ -2,16 +2,20 @@ package task.com.example.demo.Service;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+
+import task.com.example.demo.BaseResponse.ApiResponse;
 import task.com.example.demo.BaseResponse.BaseResponse;
+import task.com.example.demo.BaseResponse.PageResponse;
 import task.com.example.demo.DTO.*;
 import task.com.example.demo.Model.*;
 import task.com.example.demo.Repository.*;
 
 import java.sql.Timestamp;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 
 @org.springframework.stereotype.Service
@@ -36,6 +40,9 @@ public class ServiceImpl implements Service {
 
     @Autowired
     private SubjectStaffRepo subjectStaffRepo;
+
+    @Autowired
+    private StandardSubjectRepo standardSubjectRepo;
 
     @Override
     public BaseResponse savemedium(MediumDto mediumDto) {
@@ -62,7 +69,7 @@ public class ServiceImpl implements Service {
     @Override
     public BaseResponse getMediumById(int id) {
         BaseResponse baseResponse = new BaseResponse();
-        Medium medium=mediumRepo.findById(id).orElse(null);
+        Medium medium = mediumRepo.findById(id).orElse(null);
         baseResponse.setStatusCode("200");
         baseResponse.setStatusMsg("success");
         baseResponse.setData(medium);
@@ -137,7 +144,7 @@ public class ServiceImpl implements Service {
     @Override
     public BaseResponse getSectionById(int id) {
         BaseResponse baseResponse = new BaseResponse();
-        Section section=sectionRepo.findById(id).orElse(null);
+        Section section = sectionRepo.findById(id).orElse(null);
         baseResponse.setStatusCode("200");
         baseResponse.setStatusMsg("success");
         baseResponse.setData(section);
@@ -212,7 +219,7 @@ public class ServiceImpl implements Service {
     @Override
     public BaseResponse getStaffById(int id) {
         BaseResponse baseResponse = new BaseResponse();
-        Staff staff=staffRepo.findById(id).orElse(null);
+        Staff staff = staffRepo.findById(id).orElse(null);
         baseResponse.setStatusCode("200");
         baseResponse.setStatusMsg("success");
         baseResponse.setData(staff);
@@ -287,7 +294,7 @@ public class ServiceImpl implements Service {
     @Override
     public BaseResponse getStandardById(int id) {
         BaseResponse baseResponse = new BaseResponse();
-        Standard standard=standardRepo.findById(id).orElse(null);
+        Standard standard = standardRepo.findById(id).orElse(null);
         baseResponse.setStatusCode("200");
         baseResponse.setStatusMsg("success");
         baseResponse.setData(standard);
@@ -363,7 +370,7 @@ public class ServiceImpl implements Service {
     @Override
     public BaseResponse getsubjectById(int id) {
         BaseResponse baseResponse = new BaseResponse();
-        Subject subject=subjectRepo.findById(id).orElse(null);
+        Subject subject = subjectRepo.findById(id).orElse(null);
         baseResponse.setStatusCode("200");
         baseResponse.setStatusMsg("success");
         baseResponse.setData(subject);
@@ -423,72 +430,105 @@ public class ServiceImpl implements Service {
             standard.setUpdatedAt(new Timestamp(new java.util.Date().getTime()));
             standard.setIsActive(0);
             standard.setIsDeleted(0);
-            standardRepo.save(standard);
-            saveAll(standardDto.getStandard(), standard);
+            Optional<Section> section=sectionRepo.findById(standard.getSectionid());
+             if (section.isPresent()){
+                 standard.setSectionid(section.get());
+             }
+            standard = standardRepo.save(standard);
+           savestandardMedium(standardDto.getMediumDtoList(),standard);
+           savestandardsubject(standardDto.getSubjectDtoList(),standard);
             baseResponse.setStatusCode("200");
             baseResponse.setStatusMsg("sucess");
             baseResponse.setData(standard);
-    } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
-        private void saveAll(Integer[] Medium, Standard standard) {
-            try {
-                List<StandardMedium> standardMediumList = new LinkedList<>();
-                if (Objects.nonNull(Medium) && Medium.length > 0) {
-                    for (int i = 0; i < genre.length; i++) {
-                        Medium medium = mediumRepo.findById(medium[i])
-                                .orElseThrow(null);
-                        StandardMedium standardMedium = new StandardMedium();
-                        standardMedium.setStandard(standard);
-                        standardMedium.setMedium1(medium);
-                        standardMediumList.add(standardMedium);
-                    }
-                    standardMediumRepo.saveAll(standardMediumList);
-                }
-            }
-            catch (Exception e){}
-        }}
-
-    @Override
-    public BaseResponse savesubjectNdStaffDto(SubjectNdStaffDto subjectNdStaffDto) {
-        BaseResponse baseResponse = new BaseResponse();
-        try {
-            ModelMapper modelMapper = new ModelMapper();
-            Subject subject = modelMapper.map(subjectNdStaffDto, Subject.class);
-            subject.setCreatedAt(new Timestamp(new java.util.Date().getTime()));
-            subject.setUpdatedAt(new Timestamp(new java.util.Date().getTime()));
-            subject.setIsActive(0);
-            subject.setIsDeleted(0);
-            subjectRepo.save(subject);
-            saveAll(subjectNdStaffDto.getStaffDtos(), subject);
-            baseResponse.setStatusCode("200");
-            baseResponse.setStatusMsg("sucess");
-            baseResponse.setData(subject);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return baseResponse;
     }
 
-    private void saveAll(Integer[] staff, Subject subject) {
-        try {
-            List<StandardMedium> standardMediumList = new LinkedList<>();
-            if (Objects.nonNull(staff) && staff.length > 0) {
-                for (int i = 0; i < staff.length; i++) {
-                    Medium medium = mediumRepo.findById(staff[i])
-                            .orElseThrow(null);
-                    SubjectStaff subjectStaff = new SubjectStaff();
-                    subjectStaff.setSubject(subject);
-                    subjectStaff.setStaff1(staff);
-                    standardMediumList.add(subjectStaff);
-                }
-                standardMediumRepo.saveAll(standardMediumList);
-            }
-        }
-        catch (Exception e){}
 
-    }}
+
+
+    @Override
+    public PageResponse<Standard> getByname(Integer pageNo, Integer pageSize, String sortBy, String name) {
+        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(Sort.Direction.DESC, sortBy));
+        Page<Standard> standardPage = standardRepo.searchAllnameByLike("%" + name + "%",paging);
+        ApiResponse apiResponse=new ApiResponse();
+        apiResponse.setResponse(standardPage);
+        apiResponse.setRecordCount(standardPage.getTotalPages());
+        return null;
+    }
+
+    private void savestandardMedium(List<MediumDto> mediumDtoList, Standard standard) {
+        BaseResponse baseResponse = new BaseResponse();
+        try {
+            List<StandardMedium> standardMedium = new LinkedList<>();
+            if (Objects.nonNull(mediumDtoList) && mediumDtoList.size() > 0) {
+                mediumDtoList.stream().forEachOrdered(mediums -> {
+                    Medium medium1 = mediumRepo.findById(mediums.getId())
+                            .orElseThrow(() -> new RuntimeException("id is not here"));
+                    StandardMedium standardMedium1 = new StandardMedium();
+                    standardMedium1.setStandard(standard);
+                    standardMedium1.setMedium1(medium1);
+                    standardMedium.add(standardMedium1);
+                });
+                standardMediumRepo.saveAll(standardMedium);
+                baseResponse.setStatusMsg("success");
+                baseResponse.setStatusCode("200");
+                baseResponse.setData(standardMedium);
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    private void savestandardsubject(List<SubjectDto> subjectDtoList, Standard standard) {
+        BaseResponse baseResponse = new BaseResponse();
+        try {
+            List<StandardSubject> standardSubject = new LinkedList<>();
+            if (Objects.nonNull(subjectDtoList) && subjectDtoList.size() > 0) {
+                subjectDtoList.stream().forEachOrdered(subj -> {
+                    Subject subject1 = subjectRepo.findById(subj.getId())
+                            .orElseThrow(() -> new RuntimeException("id is not here"));
+                    StandardSubject standardSubject1 = new StandardSubject();
+                    standardSubject1.setStandard(standard);
+                    standardSubject1.setSubject1(subject1);
+                    standardSubject.add(standardSubject1);
+                });
+                standardSubjectRepo.saveAll(standardSubject);
+                baseResponse.setStatusMsg("success");
+                baseResponse.setStatusCode("200");
+                baseResponse.setData(standardSubject);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void savesubjectstaff(List<Subject> subjectList,List<Staff> staffList,Standard standard) {
+        BaseResponse baseResponse = new BaseResponse();
+        try {
+            List<SubjectStaff> subjectStaffs = new LinkedList<>();
+            if (Objects.nonNull(mediumDtoList) && mediumDtoList.size() > 0) {
+                mediumDtoList.stream().forEachOrdered(mediums -> {
+                    Medium medium1 = mediumRepo.findById(mediums.getId())
+                            .orElseThrow(() -> new RuntimeException("id is not here"));
+                    StandardMedium standardMedium1 = new StandardMedium();
+                    standardMedium1.setStandard(standard);
+                    standardMedium1.setMedium1(medium1);
+                    standardMedium.add(standardMedium1);
+                });
+                standardMediumRepo.saveAll(standardMedium);
+                baseResponse.setStatusMsg("success");
+                baseResponse.setStatusCode("200");
+                baseResponse.setData(standardMedium);
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
+
+
 
