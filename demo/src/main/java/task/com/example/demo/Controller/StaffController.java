@@ -42,10 +42,7 @@ import task.com.example.demo.Service.ServiceImpl;
         public BaseResponse Deleted(@RequestBody StaffDto staffDto) {
             return serviceimpl.IsDeletedStaff(staffDto);
         }
-        @PostMapping(value = "/savesubjectNdStaff")
-        public BaseResponse saveall(@RequestBody SubjectNdStaffDto subjectNdStaffDto) {
-            return serviceimpl.savesubjectNdStaffDto(subjectNdStaffDto);
-        }
+
 
     }
 

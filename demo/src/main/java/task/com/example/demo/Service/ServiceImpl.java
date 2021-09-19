@@ -437,6 +437,7 @@ public class ServiceImpl implements Service {
             standard = standardRepo.save(standard);
            savestandardMedium(standardDto.getMediumDtoList(),standard);
            savestandardsubject(standardDto.getSubjectDtoList(),standard);
+           savesubjectstaff(standardDto.getSubjectDtoList(),standardDto.getStaffDtoList(),standard);
             baseResponse.setStatusCode("200");
             baseResponse.setStatusMsg("sucess");
             baseResponse.setData(standard);
@@ -445,9 +446,6 @@ public class ServiceImpl implements Service {
         }
         return baseResponse;
     }
-
-
-
 
     @Override
     public PageResponse<Standard> getByname(Integer pageNo, Integer pageSize, String sortBy, String name) {
@@ -505,24 +503,27 @@ public class ServiceImpl implements Service {
         }
     }
 
-    private void savesubjectstaff(List<Subject> subjectList,List<Staff> staffList,Standard standard) {
+    private void savesubjectstaff(List<SubjectDto> subjectList,List<StaffDto> staffList,Standard standard) {
         BaseResponse baseResponse = new BaseResponse();
         try {
+            SubjectStaff subjectStaff = new SubjectStaff();
             List<SubjectStaff> subjectStaffs = new LinkedList<>();
-            if (Objects.nonNull(mediumDtoList) && mediumDtoList.size() > 0) {
-                mediumDtoList.stream().forEachOrdered(mediums -> {
-                    Medium medium1 = mediumRepo.findById(mediums.getId())
+            if (Objects.nonNull(subjectList) && subjectList.size() > 0) {
+                subjectList.stream().forEachOrdered(subjects -> {
+                    Subject subject = subjectRepo.findById(subjects.getId())
                             .orElseThrow(() -> new RuntimeException("id is not here"));
-                    StandardMedium standardMedium1 = new StandardMedium();
-                    standardMedium1.setStandard(standard);
-                    standardMedium1.setMedium1(medium1);
-                    standardMedium.add(standardMedium1);
+                    subjectStaff.setSubject(subject);
+                    staffList.stream().forEachOrdered(staff -> {
+                        Staff staff1=staffRepo.findById(staff.getId())
+                                .orElseThrow(() -> new RuntimeException("id is not here"));
+                        subjectStaff.setStaff1(staff1);
+                    });
                 });
-                standardMediumRepo.saveAll(standardMedium);
+                subjectStaffs.add(subjectStaff);
+                subjectStaffRepo.saveAll(subjectStaffs);
                 baseResponse.setStatusMsg("success");
                 baseResponse.setStatusCode("200");
-                baseResponse.setData(standardMedium);
-
+                baseResponse.setData(subjectStaff);
             }
         } catch (Exception e) {
             e.printStackTrace();

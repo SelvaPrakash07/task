@@ -72,7 +72,6 @@ public interface Service {
     BaseResponse saveEverything(StandardDto standardDto);
 
 
-    ApiResponse<Standard> GetUserWithPagination(int offset, int pageSize, String userName);
-
     PageResponse<Standard> getByname(Integer pageNo, Integer pageSize, String sortBy, String name);
+
 }

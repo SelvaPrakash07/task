@@ -52,10 +52,7 @@ import task.com.example.demo.Service.ServiceImpl;
             return serviceimpl.saveEverything(standardDto);
         }
 
-        @GetMapping("/pagination/{offset}/{pageSize}/{name}")
-        private ApiResponse<Standard> getUserWithPagination(@PathVariable int offset, @PathVariable int pageSize, @PathVariable String name){
-            return serviceimpl.GetUserWithPagination(offset, pageSize, name);
-        }
+
         @GetMapping(value = "standard/name")
         public @ResponseBody
         PageResponse<Standard> getname(@RequestParam(defaultValue = "0") Integer pageNo,

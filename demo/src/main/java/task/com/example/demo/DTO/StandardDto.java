@@ -20,6 +20,15 @@ public class StandardDto {
     public int isDeleted;
 private List<MediumDto> mediumDtoList;
 private  List<SubjectDto> subjectDtoList;
+private  List<StaffDto> staffDtoList;
+
+    public List<StaffDto> getStaffDtoList() {
+        return staffDtoList;
+    }
+
+    public void setStaffDtoList(List<StaffDto> staffDtoList) {
+        this.staffDtoList = staffDtoList;
+    }
 
     public List<SubjectDto> getSubjectDtoList() {
         return subjectDtoList;
